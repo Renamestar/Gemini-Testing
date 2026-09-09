@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cathay Mock App</title>
+    <!-- Pulling Tailwind CSS directly from the web for instant styling -->
+    <script src="https://tailwindcss.com"></script>
+</head>
+<body class="bg-gray-50 min-h-screen flex flex-col items-center justify-center p-6">
+
+    <!-- The UI Card Container Container -->
+    <div class="bg-white p-8 rounded-2xl shadow-xl max-w-md w-full border-t-8 border-[#006564]">
+        <h1 class="text-2xl font-bold text-gray-800 mb-2">Cathay Packing Assistant</h1>
+        <p class="text-sm text-gray-500 mb-6">Enter a destination to test the live Python workflow loop.</p>
+        
+        <!-- Input Group -->
+        <div class="mb-4">
+            <input type="text" id="cityInput" placeholder="Try 'Tokyo' or 'London'..." 
+                   class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#006564]">
+        </div>
+        
+        <button onclick="fetchTip()" class="w-full bg-[#006564] text-white font-semibold py-3 rounded-lg hover:bg-[#004d4c] transition">
+            Get Packing Tip
+        </button>
+
+        <!-- Result Display Area -->
+        <div id="resultBox" class="mt-6 p-4 bg-teal-50 rounded-lg border border-teal-200 hidden">
+            <p id="resultText" class="text-sm text-teal-900 font-medium"></p>
+        </div>
+    </div>
+
+    <!-- The JavaScript Connection Wire -->
+    <script>
+        async function fetchTip() {
+            const cityValue = document.getElementById('cityInput').value;
+            const resultBox = document.getElementById('resultBox');
+            const resultText = document.getElementById('resultText');
+
+            // REPLACE THIS URL with your live Render URL after you deploy the backend
+            const backendUrl = "http://127.0.0"; 
+
+            try {
+                // Shoot a POST request to your Python server over the web
+                const response = await fetch(backendUrl, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ city: cityValue })
+                });
+
+                const data = await response.json();
+                
+                // Unpack the JSON response from Python and display it inside the UI box
+                resultText.innerText = data.packing_tip;
+                resultBox.classList.remove('hidden');
+            } catch (error) {
+                // Fallback insurance policy if the Python server crashes
+                resultText.innerText = "Fallback Notice: Always pack a universal adapter and your passport!";
+                resultBox.classList.remove('hidden');
+                console.error("Connection failed:", error);
+            }
+        }
+    </script>
+</body>
+</html>
